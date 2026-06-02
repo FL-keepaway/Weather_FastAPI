@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Stations</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .pagination {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .pagination a {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #333;
+        }
+        .pagination a:hover {
+            background-color: #f2f2f2;
+        }
+        .pagination .current {
+            background-color: #007bff;
+            color: white;
+            border: 1px solid #007bff;
+        }
+        .info {
+            text-align: center;
+            margin: 10px 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weather Data API</h1>
+
+    <div class="info">
+        <p>URL format for date: http://127.0.0.1:8000/stations/station/date</p>
+        <p>URL example for date: http://127.0.0.1:8000/stations/10/1988-10-25</p>
+        <p>URL format for year: http://127.0.0.1:8000/stations/yearly/station/year</p>
+        <p>URL example for year: http://127.0.0.1:8000/stations/10/1988</p>
+        <p>URL format for station: http://127.0.0.1:8000/stations/station</p>
+        <p>URL example for station: http://127.0.0.1:8000/stations/10</p>
+    </div>
+
+    <h2>Available Weather Stations</h2>
+    <p>Total stations in database: {{ total_stations }}</p>
+    <p>Showing page {{ current_page }} of {{ total_pages }}</p>
+
+    {% if stations %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Station ID</th>
+                    <th>Station Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for station in stations %}
+                <tr>
+                    <td>{{ station.STAID }}</td>
+                    <td>{{ station.STANAME }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            {% if has_prev %}
+                <a href="?page={{ current_page - 1 }}">« Previous</a>
+            {% endif %}
+
+            {% for p in range(1, total_pages + 1) %}
+                {% if p == current_page %}
+                    <span class="current">{{ p }}</span>
+                {% elif p <= 5 or p > total_pages - 5 or (p >= current_page - 2 and p <= current_page + 2) %}
+                    <a href="?page={{ p }}">{{ p }}</a>
+                {% elif p == 6 and current_page > 5 %}
+                    <span>...</span>
+                {% endif %}
+            {% endfor %}
+
+            {% if has_next %}
+                <a href="?page={{ current_page + 1 }}">Next »</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <p>No stations data available</p>
+    {% endif %}
+</body>
+</html>
